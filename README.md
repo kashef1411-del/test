@@ -28,6 +28,33 @@ Open http://localhost:3000
 - `lib/cache.js` — in-memory 10-minute cache per query.
 - `public/` — static frontend (vanilla JS, no framework).
 
+## Deploy
+
+The repo ships with configs for three popular hosts — pick one.
+
+### Render (easiest, free tier)
+1. Push this repo to GitHub.
+2. Go to <https://render.com> → **New → Blueprint** → point at this repo.
+3. Render reads `render.yaml` and deploys automatically. You get a `https://carcompare-eg.onrender.com` URL.
+
+### Railway
+1. <https://railway.app> → **New Project → Deploy from GitHub repo**.
+2. Railway auto-detects Node via `railway.json` and runs `node server.js`.
+
+### Fly.io (Docker)
+```bash
+brew install flyctl      # or: curl -L https://fly.io/install.sh | sh
+fly auth login
+fly launch --copy-config --no-deploy   # uses fly.toml
+fly deploy
+```
+
+### Any VPS with Docker
+```bash
+docker build -t carcompare .
+docker run -d -p 80:3000 --name carcompare carcompare
+```
+
 ## Notes
 The scrapers target publicly available HTML and may need selector updates when a source changes its markup. Some sources may block non-browser requests or require a headless browser for JS-rendered pages — extend with Playwright/Puppeteer if needed.
 

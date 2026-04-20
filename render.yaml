@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: carcompare-eg
+    env: node
+    plan: free
+    buildCommand: npm ci
+    startCommand: node server.js
+    healthCheckPath: /api/sources
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
