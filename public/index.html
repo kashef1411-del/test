@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CarCompare EG — Egypt Used Car Price Aggregator</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <h1>CarCompare <span class="tag">EG</span></h1>
+      <p class="sub">Search used cars across OLX, Contact Cars, Hatla2ee, Sylndr &amp; YallaMotor — all in one place.</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <form id="search-form" class="search">
+      <input id="q" name="q" type="text" placeholder="e.g. Toyota Corolla 2018" autocomplete="off" />
+      <select id="sort">
+        <option value="price_asc">Price: Low → High</option>
+        <option value="price_desc">Price: High → Low</option>
+        <option value="year_desc">Year: Newest</option>
+        <option value="source">Source</option>
+      </select>
+      <button type="submit">Compare prices</button>
+    </form>
+
+    <div class="filters">
+      <label>Min EGP <input id="minPrice" type="number" min="0" step="10000" /></label>
+      <label>Max EGP <input id="maxPrice" type="number" min="0" step="10000" /></label>
+      <label>Min year <input id="minYear" type="number" min="1990" max="2026" /></label>
+      <div class="sources" id="source-toggles"></div>
+    </div>
+
+    <section id="stats" class="stats hidden"></section>
+    <section id="status" class="status"></section>
+
+    <section id="results" class="results"></section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <small>Aggregated from public listings. Prices in EGP. Data is cached for 10 minutes. For research &amp; personal use.</small>
+    </div>
+  </footer>
+
+  <script src="/app.js"></script>
+</body>
+</html>
