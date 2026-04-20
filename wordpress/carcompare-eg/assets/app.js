@@ -86,8 +86,13 @@
     }
 
     resultsEl.innerHTML = '';
+    var totalFromScrapers = (data.results || []).length;
     if (!filtered.length) {
-      resultsEl.innerHTML = '<p style="color:#6b7280;grid-column:1/-1;">No listings match the current filters.</p>';
+      if (!totalFromScrapers) {
+        resultsEl.innerHTML = '<p style="color:#6b7280;grid-column:1/-1;margin:0;">No inline listings were returned. Use the <strong>Open on…</strong> buttons above to search each site directly.</p>';
+      } else {
+        resultsEl.innerHTML = '<p style="color:#6b7280;grid-column:1/-1;margin:0;">Your price/year filters or source toggles excluded every listing. Widen them to see results.</p>';
+      }
     } else {
       filtered.forEach(function (item) {
         var el = document.createElement('article');
@@ -122,14 +127,6 @@
       .then(function (data) {
         state.lastData = data;
         render();
-        if (!data.results || !data.results.length) {
-          var note = document.createElement('p');
-          note.style.color = '#6b7280';
-          note.style.margin = '8px 0 0';
-          note.style.fontSize = '13px';
-          note.textContent = 'No inline listings — the sources likely blocked automated requests. Use the "Open on…" buttons above to search each site directly.';
-          statusEl.appendChild(note);
-        }
       })
       .catch(function (err) { statusEl.textContent = 'Request failed: ' + err.message; });
   }
