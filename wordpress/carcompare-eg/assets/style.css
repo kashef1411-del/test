@@ -70,6 +70,11 @@
 .cce-wrap .cce-stats .v { font-size:20px !important; font-weight:700 !important; margin-top:4px !important; color:#1a1a1a !important; }
 
 .cce-wrap .cce-status { min-height:22px !important; margin:6px 0 !important; color:#555 !important; font-size:13px !important; }
+.cce-wrap .cce-srcstatus { display:flex !important; flex-wrap:wrap !important; gap:6px !important; margin:4px 0 8px !important; }
+.cce-wrap .cce-pill { font-size:11px !important; padding:4px 10px !important; border-radius:999px !important; font-weight:600 !important; border:1px solid transparent !important; }
+.cce-wrap .cce-pill-ok { background:#e6f4ea !important; color:#1e7a3a !important; border-color:#b8e2c4 !important; }
+.cce-wrap .cce-pill-warn { background:#fff4e5 !important; color:#8a5a00 !important; border-color:#f6d7a7 !important; }
+.cce-wrap .cce-pill-err { background:#fdecec !important; color:#a62525 !important; border-color:#f4c2c2 !important; }
 
 .cce-wrap .cce-results { display:grid !important; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)) !important; gap:12px !important; padding-bottom:20px !important; }
 .cce-wrap .cce-listing { background:#fff !important; border:1px solid #e4e8f1 !important; border-radius:12px !important; padding:12px !important; display:flex !important; flex-direction:column !important; gap:6px !important; }

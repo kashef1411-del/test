@@ -2,7 +2,7 @@
 /**
  * Plugin Name: CarCompare EG
  * Description: Aggregates used-car listings from OLX, Contact Cars, Hatla2ee, Sylndr, and YallaMotor Egypt into one searchable comparison widget. Use the shortcode [car_compare].
- * Version:     1.0.1
+ * Version:     1.1.0
  * Author:      CarCompare
  * License:     MIT
  * Text Domain: carcompare-eg
@@ -10,12 +10,15 @@
 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
-define( 'CARCOMPARE_EG_VERSION', '1.0.1' );
+define( 'CARCOMPARE_EG_VERSION', '1.1.0' );
 define( 'CARCOMPARE_EG_DIR', plugin_dir_path( __FILE__ ) );
 define( 'CARCOMPARE_EG_URL', plugin_dir_url( __FILE__ ) );
 
 require_once CARCOMPARE_EG_DIR . 'includes/helpers.php';
 require_once CARCOMPARE_EG_DIR . 'includes/scrapers.php';
+if ( is_admin() ) {
+	require_once CARCOMPARE_EG_DIR . 'includes/admin.php';
+}
 
 /**
  * Shortcode: [car_compare]
@@ -102,23 +105,33 @@ function carcompare_eg_rest_search( WP_REST_Request $req ) {
 	}
 
 	$cache_key = 'cce_' . md5( strtolower( $query ) );
-	$all = get_transient( $cache_key );
+	$cached = get_transient( $cache_key );
 	$errors = array();
+	$source_status = array();
 
-	if ( false === $all ) {
+	if ( false === $cached ) {
 		$all = array();
 		foreach ( carcompare_eg_sources() as $source ) {
 			$fn = 'carcompare_eg_scrape_' . $source['slug'];
+			$status = array( 'source' => $source['name'], 'count' => 0, 'error' => null );
 			if ( function_exists( $fn ) ) {
 				try {
 					$items = call_user_func( $fn, $query );
-					if ( is_array( $items ) ) { $all = array_merge( $all, $items ); }
+					if ( is_array( $items ) ) {
+						$status['count'] = count( $items );
+						$all = array_merge( $all, $items );
+					}
 				} catch ( Exception $e ) {
+					$status['error'] = $e->getMessage();
 					$errors[] = array( 'source' => $source['name'], 'error' => $e->getMessage() );
 				}
 			}
+			$source_status[] = $status;
 		}
-		set_transient( $cache_key, $all, 10 * MINUTE_IN_SECONDS );
+		set_transient( $cache_key, array( 'items' => $all, 'status' => $source_status ), 10 * MINUTE_IN_SECONDS );
+	} else {
+		$all = isset( $cached['items'] ) ? $cached['items'] : array();
+		$source_status = isset( $cached['status'] ) ? $cached['status'] : array();
 	}
 
 	$filtered = $all;
@@ -149,10 +162,11 @@ function carcompare_eg_rest_search( WP_REST_Request $req ) {
 	}
 
 	return rest_ensure_response( array(
-		'query'    => $query,
-		'stats'    => $stats,
-		'bySource' => $by_source,
-		'errors'   => $errors,
-		'results'  => $filtered,
+		'query'        => $query,
+		'stats'        => $stats,
+		'bySource'     => $by_source,
+		'sourceStatus' => $source_status,
+		'errors'       => $errors,
+		'results'      => $filtered,
 	) );
 }

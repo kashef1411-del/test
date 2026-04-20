@@ -12,8 +12,21 @@ function carcompare_eg_sources() {
 }
 
 function carcompare_eg_fetch( $url ) {
-	$res = wp_remote_get( $url, array(
-		'timeout'     => 15,
+	$api_key = trim( (string) get_option( 'carcompare_eg_scraperapi_key', '' ) );
+	$render  = (bool) get_option( 'carcompare_eg_render_js', false );
+
+	if ( $api_key ) {
+		$proxy = 'https://api.scraperapi.com/?api_key=' . rawurlencode( $api_key ) . '&url=' . rawurlencode( $url );
+		if ( $render ) { $proxy .= '&render=true'; }
+		$target = $proxy;
+		$timeout = 60;
+	} else {
+		$target = $url;
+		$timeout = 15;
+	}
+
+	$res = wp_remote_get( $target, array(
+		'timeout'     => $timeout,
 		'redirection' => 5,
 		'user-agent'  => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36',
 		'headers'     => array(
@@ -23,7 +36,7 @@ function carcompare_eg_fetch( $url ) {
 	) );
 	if ( is_wp_error( $res ) ) { throw new Exception( $res->get_error_message() ); }
 	$code = wp_remote_retrieve_response_code( $res );
-	if ( $code < 200 || $code >= 400 ) { throw new Exception( 'HTTP ' . $code ); }
+	if ( $code < 200 || $code >= 400 ) { throw new Exception( 'HTTP ' . $code . ( $api_key ? ' via ScraperAPI' : '' ) ); }
 	return wp_remote_retrieve_body( $res );
 }
 

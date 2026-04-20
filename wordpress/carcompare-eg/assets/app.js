@@ -49,6 +49,19 @@
       .catch(function () { /* ignore */ });
   }
 
+  function renderSourceStatus(sourceStatus) {
+    if (!sourceStatus || !sourceStatus.length) return '';
+    return '<div class="cce-srcstatus">' + sourceStatus.map(function (s) {
+      if (s.error) {
+        return '<span class="cce-pill cce-pill-err" title="' + escapeHtml(s.error) + '">' + escapeHtml(s.source) + ': blocked (' + escapeHtml(s.error) + ')</span>';
+      }
+      if (s.count === 0) {
+        return '<span class="cce-pill cce-pill-warn">' + escapeHtml(s.source) + ': 0 results</span>';
+      }
+      return '<span class="cce-pill cce-pill-ok">' + escapeHtml(s.source) + ': ' + s.count + '</span>';
+    }).join(' ') + '</div>';
+  }
+
   function render() {
     if (!state.lastData) return;
     var data = state.lastData;
@@ -84,8 +97,7 @@
       });
     }
 
-    var counts = Object.keys(bySource).map(function (k) { return k + ': ' + bySource[k]; }).join(' · ');
-    statusEl.textContent = counts ? 'Sources — ' + counts : '';
+    statusEl.innerHTML = renderSourceStatus(data.sourceStatus);
   }
 
   function doSearch(e) {
