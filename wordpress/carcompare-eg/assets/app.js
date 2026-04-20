@@ -51,15 +51,20 @@
 
   function renderSourceStatus(sourceStatus) {
     if (!sourceStatus || !sourceStatus.length) return '';
-    return '<div class="cce-srcstatus">' + sourceStatus.map(function (s) {
-      if (s.error) {
-        return '<span class="cce-pill cce-pill-err" title="' + escapeHtml(s.error) + '">' + escapeHtml(s.source) + ': blocked (' + escapeHtml(s.error) + ')</span>';
-      }
-      if (s.count === 0) {
-        return '<span class="cce-pill cce-pill-warn">' + escapeHtml(s.source) + ': 0 results</span>';
-      }
-      return '<span class="cce-pill cce-pill-ok">' + escapeHtml(s.source) + ': ' + s.count + '</span>';
-    }).join(' ') + '</div>';
+    var pills = sourceStatus.map(function (s) {
+      var label, cls;
+      if (s.error)      { cls = 'cce-pill-err';  label = s.source + ': blocked'; }
+      else if (!s.count){ cls = 'cce-pill-warn'; label = s.source + ': 0 results'; }
+      else              { cls = 'cce-pill-ok';   label = s.source + ': ' + s.count; }
+      return '<span class="cce-pill ' + cls + '" title="' + escapeHtml(s.error || '') + '">' + escapeHtml(label) + '</span>';
+    }).join(' ');
+
+    var links = sourceStatus.filter(function (s) { return s.searchUrl; }).map(function (s) {
+      return '<a class="cce-openlink" href="' + escapeHtml(s.searchUrl) + '" target="_blank" rel="noopener noreferrer">Open on ' + escapeHtml(s.source) + ' ↗</a>';
+    }).join('');
+
+    return '<div class="cce-srcstatus">' + pills + '</div>' +
+           '<div class="cce-openlinks">' + links + '</div>';
   }
 
   function render() {
@@ -118,7 +123,12 @@
         state.lastData = data;
         render();
         if (!data.results || !data.results.length) {
-          statusEl.textContent = 'No results found. Some sources may block automated requests — try a more common query like "Toyota Corolla".';
+          var note = document.createElement('p');
+          note.style.color = '#6b7280';
+          note.style.margin = '8px 0 0';
+          note.style.fontSize = '13px';
+          note.textContent = 'No inline listings — the sources likely blocked automated requests. Use the "Open on…" buttons above to search each site directly.';
+          statusEl.appendChild(note);
         }
       })
       .catch(function (err) { statusEl.textContent = 'Request failed: ' + err.message; });

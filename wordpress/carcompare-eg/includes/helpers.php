@@ -3,12 +3,24 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 function carcompare_eg_sources() {
 	return array(
-		array( 'slug' => 'olx',          'name' => 'OLX Egypt' ),
-		array( 'slug' => 'contactcars',  'name' => 'Contact Cars' ),
-		array( 'slug' => 'hatla2ee',     'name' => 'Hatla2ee' ),
-		array( 'slug' => 'sylndr',       'name' => 'Sylndr' ),
-		array( 'slug' => 'yallamotor',   'name' => 'YallaMotor Egypt' ),
+		array( 'slug' => 'olx',          'name' => 'OLX Egypt',        'home' => 'https://www.olx.com.eg' ),
+		array( 'slug' => 'contactcars',  'name' => 'Contact Cars',     'home' => 'https://www.contactcars.com' ),
+		array( 'slug' => 'hatla2ee',     'name' => 'Hatla2ee',         'home' => 'https://eg.hatla2ee.com' ),
+		array( 'slug' => 'sylndr',       'name' => 'Sylndr',           'home' => 'https://sylndr.com' ),
+		array( 'slug' => 'yallamotor',   'name' => 'YallaMotor Egypt', 'home' => 'https://egypt.yallamotor.com' ),
 	);
+}
+
+function carcompare_eg_search_url( $slug, $query ) {
+	$q = rawurlencode( $query );
+	switch ( $slug ) {
+		case 'olx':         return 'https://www.olx.com.eg/en/vehicles/cars-for-sale/q-' . $q . '/';
+		case 'contactcars': return 'https://www.contactcars.com/en/used-cars/search?query=' . $q;
+		case 'hatla2ee':    return 'https://eg.hatla2ee.com/en/car?keyword=' . $q;
+		case 'sylndr':      return 'https://sylndr.com/en/buy-used-cars?search=' . $q;
+		case 'yallamotor':  return 'https://egypt.yallamotor.com/used-cars/search?q=' . $q;
+	}
+	return '';
 }
 
 function carcompare_eg_fetch( $url ) {

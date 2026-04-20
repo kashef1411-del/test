@@ -29,7 +29,8 @@ function carcompare_eg_settings_page() {
 	?>
 	<div class="wrap">
 		<h1>CarCompare EG — Settings</h1>
-		<p>OLX, Contact Cars, Sylndr, and YallaMotor actively block server-side scraping. To get real results, route requests through <a href="https://www.scraperapi.com/" target="_blank" rel="noopener">ScraperAPI</a> (free tier: 1,000 requests/month).</p>
+		<p><strong>You don't have to configure anything to use the plugin.</strong> By default the widget tries to scrape each source directly, shows any listings it can pull, and always displays <em>"Open on [site]"</em> deep-link buttons so visitors can jump straight to the same search on each site — even when scraping is blocked.</p>
+		<p>Optional: if you want richer inline results, sign up at <a href="https://www.scraperapi.com/" target="_blank" rel="noopener">ScraperAPI</a> (free tier: 1,000 requests/month) or a similar provider and paste the key below. Leave it blank to stay fully free.</p>
 		<form method="post" action="options.php">
 			<?php settings_fields( 'carcompare_eg' ); ?>
 			<table class="form-table" role="presentation">

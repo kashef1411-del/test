@@ -2,7 +2,7 @@
 /**
  * Plugin Name: CarCompare EG
  * Description: Aggregates used-car listings from OLX, Contact Cars, Hatla2ee, Sylndr, and YallaMotor Egypt into one searchable comparison widget. Use the shortcode [car_compare].
- * Version:     1.1.0
+ * Version:     1.2.0
  * Author:      CarCompare
  * License:     MIT
  * Text Domain: carcompare-eg
@@ -10,7 +10,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
-define( 'CARCOMPARE_EG_VERSION', '1.1.0' );
+define( 'CARCOMPARE_EG_VERSION', '1.2.0' );
 define( 'CARCOMPARE_EG_DIR', plugin_dir_path( __FILE__ ) );
 define( 'CARCOMPARE_EG_URL', plugin_dir_url( __FILE__ ) );
 
@@ -113,7 +113,13 @@ function carcompare_eg_rest_search( WP_REST_Request $req ) {
 		$all = array();
 		foreach ( carcompare_eg_sources() as $source ) {
 			$fn = 'carcompare_eg_scrape_' . $source['slug'];
-			$status = array( 'source' => $source['name'], 'count' => 0, 'error' => null );
+			$status = array(
+				'source'    => $source['name'],
+				'slug'      => $source['slug'],
+				'count'     => 0,
+				'error'     => null,
+				'searchUrl' => carcompare_eg_search_url( $source['slug'], $query ),
+			);
 			if ( function_exists( $fn ) ) {
 				try {
 					$items = call_user_func( $fn, $query );
